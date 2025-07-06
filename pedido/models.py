@@ -3,22 +3,23 @@ from django.contrib.auth.models import User
 
 
 class Pedido(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Usuário')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.FloatField()
+    qtd_total = models.PositiveIntegerField()
     status = models.CharField(
-        default='C',
+        default="C",
         max_length=1,
         choices=(
-        ('A', 'Aprovado'),
-        ('C', 'Criado'),
-        ('R', 'Reprovado'),
-        ('P', 'Pendente'),
-        ('E', 'Enviado'),
-        ('F', 'Finalizado'),
+            ('A', 'Aprovado'),
+            ('C', 'Criado'),
+            ('R', 'Reprovado'),
+            ('P', 'Pendente'),
+            ('E', 'Enviado'),
+            ('F', 'Finalizado'),
         )
     )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'Pedido N. {self.pk}'
 
 
@@ -33,9 +34,9 @@ class ItemPedido(models.Model):
     quantidade = models.PositiveIntegerField()
     imagem = models.CharField(max_length=2000)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'Item do {self.pedido}'
-    
+
     class Meta:
         verbose_name = 'Item do pedido'
         verbose_name_plural = 'Itens do pedido'
