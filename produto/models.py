@@ -2,6 +2,7 @@ from django.conf import settings
 import os
 from PIL import Image
 from django.db import models
+from django.contrib import admin
 from django.utils.text import slugify
 from utils import utils
 
@@ -25,13 +26,13 @@ class Produto(models.Model):
         )
     )
 
+    @admin.display(description='Preço')
     def get_preco_formatado(self):
         return utils.formata_preco(self.preco_marketing)
-    get_preco_formatado.short_description = 'Preço'
 
+    @admin.display(description='Preço Promo.')
     def get_preco_promocional_formatado(self):
         return utils.formata_preco(self.preco_marketing_promocional)
-    get_preco_promocional_formatado.short_description = 'Preço Promo.'
 
     @staticmethod
     def resize_image(img, new_width=800):
@@ -45,7 +46,8 @@ class Produto(models.Model):
 
         new_height = round((new_width * original_height) / original_width)
 
-        new_img = img_pil.resize((new_width, new_height), Image.LANCZOS)
+        resample_filter = getattr(Image, 'Resampling', Image).LANCZOS
+        new_img = img_pil.resize((new_width, new_height), resample_filter)
         new_img.save(
             img_full_path,
             optimize=True,
