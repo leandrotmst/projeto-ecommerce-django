@@ -59,4 +59,3 @@ python manage.py migrate
 ```
 
 Pronto!
-

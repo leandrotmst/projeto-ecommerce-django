@@ -1,57 +1,67 @@
 {% load omfilters %}
 
-<nav class="navbar navbar-dark bg-primary navbar-expand-lg">
-    <a class="navbar-brand" href="{% url 'produto:lista' %}">E-commerce</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'produto:lista' %}">
+            <i class="fas fa-seedling"></i> Bella Rosa <span style="font-size: 0.9rem; font-family: var(--font-body); font-weight: 400; color: var(--color-text-muted);">Floricultura</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars" style="color: var(--color-primary);"></i>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
-            {% if request.user.is_authenticated %}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Conta
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'pedido:lista' %}">Meus pedidos</a>
-                    <a class="dropdown-item" href="{% url 'perfil:criar' %}">Atualizar meus dados</a>
-                    <a class="dropdown-item" href="{% url 'perfil:logout' %}">Sair</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="form-inline my-2 my-lg-0 mx-auto" method="GET" action="{% url 'produto:busca' %}">
+                <div class="input-group">
+                    <input name="termo" value="{{ request.GET.termo }}" class="form-control search-input" type="search"
+                        placeholder="Buscar buquês, orquídeas..." aria-label="Busca">
+                    <div class="input-group-append">
+                        <button class="btn search-btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'perfil:criar' %}">Entrar</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'perfil:criar' %}">Criar conta</a>
-            </li>
-            {% endif %}
+            </form>
 
-            {% if request.session.carrinho %}
-            <li class="nav-item">
-                <a class="nav-link nav-cart-link active" href="{% url 'produto:carrinho' %}">
-                    <span class="nav-cart-text mr-1">
-                        Carrinho
-                    </span>
-                    <span class="nav-cart-count mr-1">
-                        <strong>{{ request.session.carrinho|cart_total_qtd }}x</strong>
-                    </span>
-                    <span class="nav-cart-icon mr-2">
-                        <i class="fas fa-shopping-cart"></i>
-                    </span>
-                </a>
-            </li>
-            {% endif %}
+            <ul class="navbar-nav ml-auto align-items-center">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown mr-2">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="far fa-user-circle mr-1"></i> {{ request.user.first_name|default:request.user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'pedido:lista' %}"><i class="fas fa-box-open mr-2 text-muted"></i> Meus Pedidos</a>
+                        <a class="dropdown-item" href="{% url 'perfil:criar' %}"><i class="fas fa-user-edit mr-2 text-muted"></i> Meu Perfil</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="{% url 'perfil:logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Sair</a>
+                    </div>
+                </li>
+                {% else %}
+                <li class="nav-item mr-2">
+                    <a class="nav-link" href="{% url 'perfil:criar' %}"><i class="far fa-user mr-1"></i> Entrar / Cadastrar</a>
+                </li>
+                {% endif %}
 
-
-        </ul>
-        <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'produto:busca' %}">
-            <input name="termo" value="{{ request.GET.termo }}" class="form-control mr-sm-2" type="search"
-                placeholder="Busca" aria-label="Busca">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Busca</button>
-        </form>
+                {% if request.session.carrinho %}
+                <li class="nav-item">
+                    <a class="nav-cart-btn" href="{% url 'produto:carrinho' %}">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Carrinho</span>
+                        <span class="badge badge-pill badge-light ml-1" style="color: var(--color-secondary); font-size: 0.85rem;">
+                            {{ request.session.carrinho|cart_total_qtd }}
+                        </span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-cart-btn" href="{% url 'produto:carrinho' %}" style="opacity: 0.75;">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Carrinho (0)</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </nav>

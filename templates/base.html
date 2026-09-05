@@ -3,13 +3,20 @@
 
 <head>
     {% include 'parciais/_head.html' %}
-    <title>{% block titulo %}{% endblock %}E-commerce</title>
+    <title>{% block titulo %}{% endblock %}Floricultura Bella Rosa | Flores & Arranjos Especiais</title>
 </head>
 
 <body>
+    <!-- Top Announcement Bar -->
+    <div class="top-bar text-center">
+        <div class="container">
+            <span><i class="fas fa-truck mr-1"></i> Entregas de Flores Frescas no Mesmo Dia • Frete Grátis nas compras acima de R$ 150</span>
+        </div>
+    </div>
+
     {% include 'parciais/_nav.html' %}
 
-    <main class="container mt-4 mb-4">
+    <main class="container my-4">
         {% include 'parciais/_messages.html' %}
         {% block conteudo %}{% endblock %}
     </main>

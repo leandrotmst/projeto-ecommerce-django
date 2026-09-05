@@ -1,62 +1,65 @@
 {% extends 'base.html' %}
 {% load omfilters %}
 
-{% block titulo %}Carrinho | {% endblock %}
+{% block titulo %}Seu Carrinho de Compras | {% endblock %}
 
 {% block conteudo %}
 
 {% if carrinho %}
-
 <div class="row mt-3">
-    <div class="col">
-        <h3>Carrinho de compras</h3>
-        <p class="lead">Os produtos, quantidades e preços que você escolheu.</p>
+    <div class="col-lg-8">
+        <h2 class="font-heading mb-1"><i class="fas fa-shopping-bag text-danger mr-2"></i> Carrinho de Compras</h2>
+        <p class="text-muted mb-4">Confira as flores e arranjos selecionados para o seu pedido.</p>
 
         {% include 'parciais/_carrinho.html' %}
     </div>
-</div>
 
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-lg p-3">
+            <h4 class="font-heading text-dark border-bottom pb-2 mb-3">Resumo do Pedido</h4>
+            
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Total de Itens:</span>
+                <span class="font-weight-bold">{{ carrinho|cart_total_qtd }} item(ns)</span>
+            </div>
 
+            <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Entrega:</span>
+                <span class="text-success font-weight-bold"><i class="fas fa-truck mr-1"></i> Calcular no checkout</span>
+            </div>
 
-<div class="row mt-3">
-    <div class="col-lg">
-        <p class='lead'>Total no carrinho</p>
+            <hr>
 
-        <div class='table-responsive'>
-            <table class="table">
-                <tr>
-                    <td class="font-weight-bold">Total</td>
-                    <td>{{ carrinho|cart_totals|formata_preco }}</td>
-                </tr>
-            </table>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="h5 font-weight-bold mb-0">Valor Total:</span>
+                <span class="h3 font-weight-bold text-success mb-0">{{ carrinho|cart_totals|formata_preco }}</span>
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <a class="btn btn-hero btn-block py-3" href="{% url 'produto:resumodacompra' %}">
+                <i class="fas fa-check-circle mr-2"></i> Finalizar Compra
+            </a>
+            {% else %}
+            <a class="btn btn-hero btn-block py-3" href="{% url 'perfil:criar' %}">
+                <i class="fas fa-user-lock mr-2"></i> Entrar / Cadastrar para Finalizar
+            </a>
+            {% endif %}
+
+            <a href="{% url 'produto:lista' %}" class="btn btn-link btn-block text-muted mt-2">
+                <i class="fas fa-arrow-left mr-1"></i> Continuar Comprando
+            </a>
         </div>
     </div>
-    <div class="col-lg mt-auto">
-
-        {% if request.user.is_authenticated %}
-        <a class="btn btn-lg btn-block btn-primary" href="{% url 'produto:resumodacompra' %}">
-            Comprar
-        </a>
-        {% else %}
-        <a class="btn btn-lg btn-block btn-primary" href="{% url 'perfil:criar' %}">
-            Entrar ou cadastrar e comprar
-        </a>
-        {% endif %}
-    </div>
 </div>
-
 {% else %}
-
-<div class="row mt-3">
-    <div class="col">
-        <h3>Carrinho vazio</h3>
-        <p class="lead">Não há produtos no seu carrinho.</p>
-    </div>
+<div class="text-center py-5 bg-white rounded shadow-sm my-4">
+    <i class="fas fa-shopping-bag text-muted mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
+    <h3 class="font-heading text-dark">Seu carrinho está vazio</h3>
+    <p class="text-muted mb-4">Navegue pelas nossas coleções e escolha as flores perfeitas para presentear.</p>
+    <a href="{% url 'produto:lista' %}" class="btn btn-hero px-4 py-2">
+        <i class="fas fa-leaf mr-2"></i> Ver Flores & Arranjos
+    </a>
 </div>
-
 {% endif %}
-
-
-
 
 {% endblock %}

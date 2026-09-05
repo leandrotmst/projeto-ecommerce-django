@@ -4,86 +4,99 @@
 {% block titulo %}{{ produto.nome }} | {% endblock %}
 
 {% block conteudo %}
-<div class="row">
-    <div class="col-lg">
-        <div class="row no-gutters">
-            <div class="col-lg-12">
+<div class="detail-card">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="detail-img-container">
                 {% if produto.imagem %}
-                <img class="img-fluid" src="{{ produto.imagem.url }}">
+                <img class="img-fluid w-100" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" style="max-height: 480px; object-fit: cover; border-radius: var(--radius-md);">
+                {% else %}
+                <img class="img-fluid w-100" src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=800&q=80" alt="{{ produto.nome }}">
                 {% endif %}
             </div>
         </div>
-    </div>
-    <div class="col-lg">
-        <div class="mt-4 mt-lg-0">
-            <h1 class="h2">{{ produto.nome }}</h1>
-            <p class="lead">{{ produto.descricao_curta }}</p>
-            <p class="lead">
-                {% if produto.preco_marketing_promocional %}
-                <span id="variation-preco-promocional" class="lead product-price">
-                    {{ produto.preco_marketing_promocional|formata_preco }}
+        <div class="col-lg-6">
+            <div class="pl-lg-3">
+                <span class="badge badge-success px-3 py-2 mb-2" style="font-size: 0.8rem; background-color: var(--color-primary);">
+                    <i class="fas fa-leaf mr-1"></i> Flores Frescas do Dia
                 </span>
-                <span id="variation-preco" class="lead product-old-price text-muted">
-                    {{ produto.preco_marketing|formata_preco }}
-                </span>
-                {% else %}
-                <span id="variation-preco" class="lead product-price">
-                    {{ produto.preco_marketing|formata_preco }}
-                </span>
-                {% endif %}
-            </p>
-
-            <form action="{% url 'produto:adicionaraocarrinho' %}" id="form-add-to-cart">
-                <div class="form-group">
-                    <select id="select-variacoes" name="vid" class="form-control form-control-lg">
-                        {% for variacao in produto.variacao_set.all %}
-
-                        {% if variacao.preco_promocional %}
-                        <option data-preco="{{ variacao.preco|formata_preco }}"
-                            data-preco-promocional="{{ variacao.preco_promocional|formata_preco }}"
-                            value="{{ variacao.id }}">
-                            {% if variacao.nome %}
-                            {{ variacao.nome }}
-                            {% else %}
-                            {{ variacao }}
-                            {% endif %}
-                        </option>
-                        {% else %}
-                        <option data-preco="{{ variacao.preco|formata_preco }}" value="{{ variacao.id }}">
-                            {% if variacao.nome %}
-                            {{ variacao.nome }}
-                            {% else %}
-                            {{ variacao }}
-                            {% endif %}
-                        </option>
-                        {% endif %}
-
-                        {% endfor %}
-                    </select>
+                <h1 class="detail-title">{{ produto.nome }}</h1>
+                <p class="text-muted font-weight-500" style="font-size: 1.05rem;">{{ produto.descricao_curta }}</p>
+                
+                <div class="detail-price-box">
+                    <span class="text-muted d-block small font-weight-bold uppercase mb-1" style="letter-spacing: 0.5px;">Preço Especial</span>
+                    {% if produto.preco_marketing_promocional %}
+                    <span id="variation-preco-promocional" class="detail-price">
+                        {{ produto.preco_marketing_promocional|formata_preco }}
+                    </span>
+                    <span id="variation-preco" class="product-old-price ml-2" style="font-size: 1.2rem;">
+                        {{ produto.preco_marketing|formata_preco }}
+                    </span>
+                    {% else %}
+                    <span id="variation-preco" class="detail-price">
+                        {{ produto.preco_marketing|formata_preco }}
+                    </span>
+                    {% endif %}
                 </div>
 
-                <div class="text-left">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">
-                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                        Adicionar ao carrinho
+                <form action="{% url 'produto:adicionaraocarrinho' %}" id="form-add-to-cart">
+                    <div class="form-group mb-4">
+                        <label for="select-variacoes" class="font-weight-600 text-dark">Selecione o Tamanho / Opção:</label>
+                        <select id="select-variacoes" name="vid" class="form-control form-control-lg custom-select">
+                            {% for variacao in produto.variacao_set.all %}
+                            {% if variacao.preco_promocional %}
+                            <option data-preco="{{ variacao.preco|formata_preco }}"
+                                data-preco-promocional="{{ variacao.preco_promocional|formata_preco }}"
+                                value="{{ variacao.id }}">
+                                {% if variacao.nome %}
+                                {{ variacao.nome }} — {{ variacao.preco_promocional|formata_preco }}
+                                {% else %}
+                                {{ variacao }} — {{ variacao.preco_promocional|formata_preco }}
+                                {% endif %}
+                            </option>
+                            {% else %}
+                            <option data-preco="{{ variacao.preco|formata_preco }}" value="{{ variacao.id }}">
+                                {% if variacao.nome %}
+                                {{ variacao.nome }} — {{ variacao.preco|formata_preco }}
+                                {% else %}
+                                {{ variacao }} — {{ variacao.preco_promocional|formata_preco }}
+                                {% endif %}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-hero btn-block py-3">
+                        <i class="fas fa-shopping-bag mr-2"></i> Adicionar ao Carrinho
                     </button>
+                </form>
+
+                <!-- Guarantee features -->
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-6 mb-2">
+                        <small class="text-muted"><i class="fas fa-truck text-success mr-2"></i> Entrega agendada ou rápida</small>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <small class="text-muted"><i class="fas fa-gift text-danger mr-2"></i> Cartão de mensagem cortesia</small>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted"><i class="fas fa-shield-alt text-primary mr-2"></i> Garantia de frescor por 7 dias</small>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted"><i class="fas fa-lock text-warning mr-2"></i> Pagamento 100% Seguro</small>
+                    </div>
                 </div>
 
-            </form>
-
-
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="mt-5 mb-5">
-            <h2 class="text-center">{{ produto.nome }}</h2>
-            {{ produto.descricao_longa|linebreaks }}
-        </div>
+<div class="detail-card">
+    <h3 class="font-heading text-dark mb-3"><i class="fas fa-align-left text-success mr-2"></i> Detalhes & Cuidados com o Arranjo</h3>
+    <div class="text-secondary" style="font-size: 1.05rem; line-height: 1.8;">
+        {{ produto.descricao_longa|linebreaks }}
     </div>
 </div>
-
-
 {% endblock %}

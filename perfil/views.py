@@ -53,11 +53,11 @@ class BasePerfil(View):
         if self.request.user.is_authenticated:
             self.template_name = 'perfil/atualizar.html'
 
-        self.renderizar = render(
-            self.request, self.template_name, self.contexto)
+    def renderizar(self):
+        return render(self.request, self.template_name, self.contexto)
 
     def get(self, *args, **kwargs):
-        return self.renderizar
+        return self.renderizar()
 
 
 class Criar(BasePerfil):
@@ -69,7 +69,7 @@ class Criar(BasePerfil):
                 'os campos foram preenchidos corretamente.'
             )
 
-            return self.renderizar
+            return self.renderizar()
 
         username = self.userform.cleaned_data.get('username')
         password = self.userform.cleaned_data.get('password')
