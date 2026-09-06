@@ -93,13 +93,24 @@ import dj_database_url
 DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
 
 if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+    db_config = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+    # Filter out non-standard connection options (like supa=base-pooler.x) from OPTIONS
+    VALID_POSTGRES_OPTIONS = {
+        'sslmode', 'sslrootcert', 'sslcert', 'sslkey', 'sslpassword',
+        'sslcrl', 'connect_timeout', 'target_session_attrs',
+        'application_name', 'keepalives', 'keepalives_idle',
+        'keepalives_interval', 'keepalives_count'
     }
+    if 'OPTIONS' in db_config and isinstance(db_config['OPTIONS'], dict):
+        db_config['OPTIONS'] = {
+            k: v for k, v in db_config['OPTIONS'].items()
+            if k.lower() in VALID_POSTGRES_OPTIONS
+        }
+    DATABASES = {'default': db_config}
 else:
     # Detect Vercel serverless environment (read-only filesystem)
     IS_VERCEL = 'VERCEL' in os.environ or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')
