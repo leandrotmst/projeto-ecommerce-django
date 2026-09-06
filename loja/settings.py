@@ -51,6 +51,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,18 +84,43 @@ WSGI_APPLICATION = 'loja.wsgi.application'
 
 
 import os
+import shutil
 import dj_database_url
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Detect Vercel serverless environment (read-only filesystem)
+    IS_VERCEL = 'VERCEL' in os.environ or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')
+    if IS_VERCEL:
+        tmp_db = Path('/tmp/db.sqlite3')
+        source_db = BASE_DIR / 'db.sqlite3'
+        if source_db.exists() and not tmp_db.exists():
+            try:
+                shutil.copyfile(source_db, tmp_db)
+            except Exception as e:
+                print('Error copying db.sqlite3 to /tmp:', e)
+        db_path = tmp_db if tmp_db.exists() else source_db
+    else:
+        db_path = BASE_DIR / 'db.sqlite3'
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': db_path,
+        }
+    }
 
 
 # Password validation
