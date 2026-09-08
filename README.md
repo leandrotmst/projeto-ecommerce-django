@@ -46,6 +46,7 @@ python -m venv venv
 venv\Scripts\activate.bat
 python -m pip install -r requirements.txt
 python manage.py migrate
+python manage.py runserver
 ```
 
 - Para **Linux / Mac**:
@@ -56,6 +57,8 @@ python3 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py runserver
 ```
 
 Pronto!
+Agora abra o link http://127.0.0.1:8000 no seu navegador!
